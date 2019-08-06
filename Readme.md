@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
-* Студент: [Николай Данченко](https://up.htmlacademy.ru/ecmascript/9/user/542021).
-* Наставник: `Неизвестно`.
+- Студент: [Николай Данченко](https://up.htmlacademy.ru/ecmascript/9/user/542021).
+- Наставник: `Артем Черкасов`.
 
 ---
 
