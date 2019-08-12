@@ -25,11 +25,11 @@ render(main, getFilmLayout());
 const filmList = document.querySelector(`.films-list__container`);
 
 const filmListTopRated = document.querySelector(
-    `.films-list--extra:nth-of-type(1) .films-list__container`
+    `.films-list--extra:nth-of-type(2) .films-list__container`
 );
 
 const filmListMostCommented = document.querySelector(
-    `.films-list--extra:nth-of-type(2) .films-list__container`
+    `.films-list--extra:nth-of-type(3) .films-list__container`
 );
 
 new Array(5).fill(``).forEach(() => render(filmList, getFilmCard()));
@@ -38,4 +38,12 @@ new Array(2)
   .fill(``)
   .forEach(() => render(filmListMostCommented, getFilmCard()));
 
-// render(main, getFilmPopup());
+const films = document.querySelectorAll(
+    `.films-list .films-list__container .film-card`
+);
+
+films.forEach((card) =>
+  card.addEventListener(`click`, () => {
+    render(main, getFilmPopup());
+  })
+);
