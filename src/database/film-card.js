@@ -1,5 +1,5 @@
 import {filmModel} from "../models/film-card.js";
-import {randomRange} from "../utils/random.js";
+import {randomRange, randomFromArray} from "../utils/random.js";
 
 const TITLES = [
   `Молчание ягнят`,
@@ -48,18 +48,16 @@ const DESCRIPTIONS = [
 export const getFilmCard = () => {
   const film = filmModel;
 
-  film.title = TITLES[randomRange(0, TITLES.length)];
+  film.title = randomFromArray(TITLES);
   film.rating = `${randomRange(0, 11)}`;
   film.info.year = `${randomRange(2001, 2019)}`;
   film.info.duration = `${randomRange(0, 2)}h ${randomRange(20, 51)}m`;
-  film.info.genre = GENRES[randomRange(0, GENRES.length)];
-  film.imgSrc = `./images/posters/${POSTERS[randomRange(0, POSTERS.length)]}`;
+  film.info.genre = randomFromArray(GENRES);
+  film.imgSrc = `./images/posters/${randomFromArray(POSTERS)}`;
 
   new Array(3).fill(``).forEach(() => {
     if (randomRange(0, 2) === 1) {
-      film.description += `${
-        DESCRIPTIONS[randomRange(0, DESCRIPTIONS.length)]
-      }`;
+      film.description += `${randomFromArray(DESCRIPTIONS)}`;
     }
   });
 

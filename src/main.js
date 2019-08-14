@@ -32,11 +32,12 @@ const filmListTopRated = document.querySelector(
 const filmListMostCommented = document.querySelector(
     `.films-list--extra:nth-of-type(3) .films-list__container`
 );
-
+// //
 new Array(5).fill(``).forEach(() => {
   const s = getFilmCard();
   console.log(s);
 });
+
 // new Array(2).fill(``).forEach(() => render(filmListTopRated, getFilmCard()));
 // new Array(2)
 //   .fill(``)
