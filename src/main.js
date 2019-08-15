@@ -8,8 +8,15 @@ import {getFilmPopup} from "./components/film-popup.js";
 import {getSortBar} from "./components/sort-bar.js";
 import {getFilmCard} from "./database/film-card.js";
 
+const FILM_FULL_COUNT = 15;
+const SHOW_MORE_COUNT = 5;
+
+let filmShowCount = SHOW_MORE_COUNT;
+
 const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
+
+const allFilms = [];
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -25,19 +32,25 @@ render(main, getFilmLayout());
 
 const filmList = document.querySelector(`.films-list__container`);
 
-const filmListTopRated = document.querySelector(
-    `.films-list--extra:nth-of-type(2) .films-list__container`
-);
+// const filmListTopRated = document.querySelector(
+//     `.films-list--extra:nth-of-type(2) .films-list__container`
+// );
 
-const filmListMostCommented = document.querySelector(
-    `.films-list--extra:nth-of-type(3) .films-list__container`
-);
-// //
-new Array(5).fill(``).forEach(() => {
-  const s = getFilmCard();
-  console.log(s);
+// const filmListMostCommented = document.querySelector(
+//     `.films-list--extra:nth-of-type(3) .films-list__container`
+// );
+
+new Array(FILM_FULL_COUNT).fill(``).map(() => {
+  allFilms.push(getFilmCard());
 });
 
+const showFilmsList = () => {
+  allFilms.slice(filmShowCount).forEach((film) => {
+    render(filmList, getFilmCardComponent(film));
+  });
+};
+
+showFilmsList();
 // new Array(2).fill(``).forEach(() => render(filmListTopRated, getFilmCard()));
 // new Array(2)
 //   .fill(``)

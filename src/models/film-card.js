@@ -1,4 +1,4 @@
-export const filmModel = {
+const filmModel = {
   title: ``,
   rating: ``,
   info: {year: ``, duration: ``, genre: ``},
@@ -6,3 +6,8 @@ export const filmModel = {
   description: ``,
   commentsCount: `0`
 };
+
+export const getFilmModel = () => ({
+  ...filmModel,
+  info: {...filmModel.info}
+});

@@ -1,4 +1,4 @@
-import {filmModel} from "../models/film-card.js";
+import {getFilmModel} from "../models/film-card.js";
 import {randomRange, randomFromArray} from "../utils/random.js";
 
 const TITLES = [
@@ -46,7 +46,7 @@ const DESCRIPTIONS = [
 ];
 
 export const getFilmCard = () => {
-  const film = filmModel;
+  const film = getFilmModel();
 
   film.title = randomFromArray(TITLES);
   film.rating = `${randomRange(0, 11)}`;
@@ -55,7 +55,9 @@ export const getFilmCard = () => {
   film.info.genre = randomFromArray(GENRES);
   film.imgSrc = `./images/posters/${randomFromArray(POSTERS)}`;
 
-  new Array(3).fill(``).forEach(() => {
+  // "случайным образом объединяйте от одного до трёх предложений."
+  film.description += `${randomFromArray(DESCRIPTIONS)}`;
+  new Array(2).fill(``).forEach(() => {
     if (randomRange(0, 2) === 1) {
       film.description += `${randomFromArray(DESCRIPTIONS)}`;
     }
