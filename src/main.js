@@ -7,6 +7,7 @@ import {getFilmCardComponent} from "./components/film-card.js";
 import {getFilmPopup} from "./components/film-popup.js";
 import {getSortBar} from "./components/sort-bar.js";
 import {getFilmCard} from "./database/film-card.js";
+import {getFilter, fillFilter} from "./database/filter.js";
 
 const FILM_FULL_COUNT = 15;
 const SHOW_MORE_COUNT = 5;
@@ -18,6 +19,14 @@ const main = document.querySelector(`.main`);
 
 const allFilms = [];
 
+new Array(FILM_FULL_COUNT).fill(``).map(() => {
+  allFilms.push(getFilmCard());
+});
+
+const filter = getFilter();
+
+fillFilter(filter, allFilms);
+
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
@@ -25,7 +34,7 @@ const render = (container, template, place = `beforeend`) => {
 render(header, getSearch());
 render(header, getProfile());
 
-render(main, getMenu());
+render(main, getMenu(filter));
 render(main, getSortBar());
 render(main, getStatistic());
 render(main, getFilmLayout());
@@ -40,12 +49,8 @@ const filmList = document.querySelector(`.films-list__container`);
 //     `.films-list--extra:nth-of-type(3) .films-list__container`
 // );
 
-new Array(FILM_FULL_COUNT).fill(``).map(() => {
-  allFilms.push(getFilmCard());
-});
-
 const showFilmsList = () => {
-  allFilms.slice(filmShowCount).forEach((film) => {
+  allFilms.slice(0, filmShowCount).forEach((film) => {
     render(filmList, getFilmCardComponent(film));
   });
 };

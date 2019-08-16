@@ -1,5 +1,5 @@
 import {getFilmModel} from "../models/film-card.js";
-import {randomRange, randomFromArray} from "../utils/random.js";
+import {randomRange, randomFromArray, randomBool} from "../utils/random.js";
 
 const TITLES = [
   `Молчание ягнят`,
@@ -63,7 +63,10 @@ export const getFilmCard = () => {
     }
   });
 
-  film.commentsCount = `${randomRange(0, 5)}`;
+  film.commentsCount = randomRange(0, 5);
+  film.watchList = randomBool();
+  film.watched = randomBool();
+  film.favorite = randomBool();
 
   return film;
 };
