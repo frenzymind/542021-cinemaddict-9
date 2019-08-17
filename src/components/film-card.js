@@ -7,7 +7,9 @@ export const getFilmCardComponent = (film) => {
     <span class="film-card__duration">${film.durationHour}h ${
   film.durationMinute
 }m</span>
-    <span class="film-card__genre">${film.genre}</span>
+    ${Array.from(film.genre)
+      .map((genre) => `<span class="film-card__genre">${genre}</span>`)
+      .join(``)}
   </p>
   <img src="${film.imgSrc}" alt="" class="film-card__poster">
   <p class="film-card__description">${film.description}</p>

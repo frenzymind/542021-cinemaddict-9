@@ -13,6 +13,4 @@ const filmModel = {
   favorite: false
 };
 
-export const getFilmModel = () => ({
-  ...filmModel
-});
+export const getFilmModel = () => ({...filmModel, genre: new Set()});

@@ -1,13 +1,14 @@
 import {getSearch} from "./components/search.js";
 import {getProfile} from "./components/profile.js";
 import {getMenu} from "./components/menu.js";
-import {getStatistic} from "./components/statistic.js";
+import {getStatisticComponent} from "./components/statistic.js";
 import {getFilmLayout} from "./components/film-layout.js";
 import {getFilmCardComponent} from "./components/film-card.js";
-import {getFilmPopup} from "./components/film-popup.js";
+// import {getFilmPopup} from "./components/film-popup.js";
 import {getSortBar} from "./components/sort-bar.js";
 import {getFilmCard} from "./database/film-card.js";
 import {getFilter, fillFilter} from "./database/filter.js";
+import {getStatistic, fillStatistic} from "./database/statistic";
 
 const FILM_FULL_COUNT = 15;
 const SHOW_MORE_COUNT = 5;
@@ -24,8 +25,10 @@ new Array(FILM_FULL_COUNT).fill(``).map(() => {
 });
 
 const filter = getFilter();
-
 fillFilter(filter, allFilms);
+
+const statistic = getStatistic();
+fillStatistic(statistic, allFilms);
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -36,7 +39,7 @@ render(header, getProfile());
 
 render(main, getMenu(filter));
 render(main, getSortBar());
-render(main, getStatistic());
+render(main, getStatisticComponent(statistic));
 render(main, getFilmLayout());
 
 const filmList = document.querySelector(`.films-list__container`);
