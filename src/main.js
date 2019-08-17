@@ -4,11 +4,13 @@ import {getMenu} from "./components/menu.js";
 import {getStatisticComponent} from "./components/statistic.js";
 import {getFilmLayout} from "./components/film-layout.js";
 import {getFilmCardComponent} from "./components/film-card.js";
-// import {getFilmPopup} from "./components/film-popup.js";
+import {getFilmPopup} from "./components/film-popup.js";
 import {getSortBar} from "./components/sort-bar.js";
 import {getFilmCard} from "./database/film-card.js";
 import {getFilter, fillFilter} from "./database/filter.js";
 import {getStatistic, fillStatistic} from "./database/statistic";
+import {showFilmPopup} from "./services/popup-service.js";
+import {randomFromArray} from "./utils/random.js";
 
 const FILM_FULL_COUNT = 15;
 const SHOW_MORE_COUNT = 5;
@@ -44,13 +46,13 @@ render(main, getFilmLayout());
 
 const filmList = document.querySelector(`.films-list__container`);
 
-// const filmListTopRated = document.querySelector(
-//     `.films-list--extra:nth-of-type(2) .films-list__container`
-// );
+const filmListTopRated = document.querySelector(
+    `.films-list--extra:nth-of-type(2) .films-list__container`
+);
 
-// const filmListMostCommented = document.querySelector(
-//     `.films-list--extra:nth-of-type(3) .films-list__container`
-// );
+const filmListMostCommented = document.querySelector(
+    `.films-list--extra:nth-of-type(3) .films-list__container`
+);
 
 const showFilmsList = () => {
   allFilms.slice(0, filmShowCount).forEach((film) => {
@@ -59,17 +61,30 @@ const showFilmsList = () => {
 };
 
 showFilmsList();
-// new Array(2).fill(``).forEach(() => render(filmListTopRated, getFilmCard()));
-// new Array(2)
-//   .fill(``)
-//   .forEach(() => render(filmListMostCommented, getFilmCard()));
 
-// const films = document.querySelectorAll(
-//     `.films-list .films-list__container .film-card`
-// );
+new Array(2)
+  .fill(``)
+  .map(() =>
+    render(filmListTopRated, getFilmCardComponent(randomFromArray(allFilms)))
+  );
 
-// films.forEach((card) =>
-//   card.addEventListener(`click`, () => {
-//     render(main, getFilmPopup());
-//   })
-// );
+new Array(2)
+  .fill(``)
+  .forEach(() =>
+    render(
+        filmListMostCommented,
+        getFilmCardComponent(randomFromArray(allFilms))
+    )
+  );
+
+const films = document.querySelectorAll(
+    `.films-list .films-list__container .film-card`
+);
+
+films.forEach((film, index) =>
+  film.addEventListener(`click`, () => {
+    showFilmPopup(() => {
+      render(main, getFilmPopup(allFilms[index]));
+    });
+  })
+);

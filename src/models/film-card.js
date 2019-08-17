@@ -10,7 +10,12 @@ const filmModel = {
   commentsCount: 0,
   watchList: false,
   watched: false,
-  favorite: false
+  favorite: false,
+  comments: []
 };
 
-export const getFilmModel = () => ({...filmModel, genre: new Set()});
+export const getFilmModel = () => ({
+  ...filmModel,
+  genre: new Set(),
+  comments: [...filmModel.comments]
+});

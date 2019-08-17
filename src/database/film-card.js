@@ -1,4 +1,5 @@
 import {getFilmModel} from "../models/film-card.js";
+import {getCommentModel} from "../models/comment.js";
 import {randomRange, randomFromArray, randomBool} from "../utils/random.js";
 
 const TITLES = [
@@ -45,6 +46,13 @@ const DESCRIPTIONS = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
+const EMOJI = [
+  `./images/emoji/smile.png`,
+  `./images/emoji/sleeping.png`,
+  `./images/emoji/puke.png`,
+  `./images/emoji/angry.png`
+];
+
 export const getFilmCard = () => {
   const film = getFilmModel();
 
@@ -57,10 +65,10 @@ export const getFilmCard = () => {
   film.imgSrc = `./images/posters/${randomFromArray(POSTERS)}`;
 
   // "случайным образом объединяйте от одного до трёх предложений."
-  film.description += `${randomFromArray(DESCRIPTIONS)}`;
+  film.description += randomFromArray(DESCRIPTIONS);
   new Array(2).fill(``).forEach(() => {
     if (randomRange(0, 2) === 1) {
-      film.description += `${randomFromArray(DESCRIPTIONS)}`;
+      film.description += randomFromArray(DESCRIPTIONS);
     }
   });
 
@@ -68,6 +76,17 @@ export const getFilmCard = () => {
   film.watchList = randomBool();
   film.watched = randomBool();
   film.favorite = randomBool();
+
+  new Array(film.commentsCount).fill(``).map(() => {
+    const comment = getCommentModel();
+
+    comment.emoji = randomFromArray(EMOJI);
+    comment.text = randomFromArray(DESCRIPTIONS);
+    comment.author = `Quentin Tarantino`;
+    comment.daysAgo = randomRange(0, 3);
+
+    film.comments.push(comment);
+  });
 
   return film;
 };
