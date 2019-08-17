@@ -50,9 +50,10 @@ export const getFilmCard = () => {
 
   film.title = randomFromArray(TITLES);
   film.rating = `${randomRange(0, 11)}`;
-  film.info.year = `${randomRange(2001, 2019)}`;
-  film.info.duration = `${randomRange(0, 2)}h ${randomRange(20, 51)}m`;
-  film.info.genre = randomFromArray(GENRES);
+  film.year = `${randomRange(2001, 2019)}`;
+  film.durationHour = `${randomRange(0, 2)}`;
+  film.durationMinute = `${randomRange(20, 51)}`;
+  film.genre = randomFromArray(GENRES);
   film.imgSrc = `./images/posters/${randomFromArray(POSTERS)}`;
 
   // "случайным образом объединяйте от одного до трёх предложений."

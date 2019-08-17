@@ -1,7 +1,10 @@
 const filmModel = {
   title: ``,
   rating: ``,
-  info: {year: ``, duration: ``, genre: ``},
+  year: ``,
+  durationHour: ``,
+  durationMinute: ``,
+  genre: ``,
   imgSrc: ``,
   description: ``,
   commentsCount: 0,
@@ -11,6 +14,5 @@ const filmModel = {
 };
 
 export const getFilmModel = () => ({
-  ...filmModel,
-  info: {...filmModel.info}
+  ...filmModel
 });
