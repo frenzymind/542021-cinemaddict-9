@@ -83,8 +83,6 @@ const films = document.querySelectorAll(
 
 films.forEach((film, index) =>
   film.addEventListener(`click`, () => {
-    showFilmPopup(() => {
-      render(main, getFilmPopup(allFilms[index]));
-    });
+    showFilmPopup(main, getFilmPopup(allFilms[index]));
   })
 );

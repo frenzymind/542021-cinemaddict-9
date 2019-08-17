@@ -1,13 +1,19 @@
-export const showFilmPopup = (cb) => {
-  const activePopup = document.querySelector(`.film-details`);
+let activePopup;
+let closeBtn;
 
-  if (activePopup !== null) {
-    activePopup.remove();
+export const showFilmPopup = (container, template) => {
+  if (activePopup !== undefined) {
+    closeFilmPopup();
   }
-  cb();
+
+  container.insertAdjacentHTML(`beforeend`, template);
+
+  activePopup = document.querySelector(`.film-details`);
+  closeBtn = activePopup.querySelector(`.film-details__close-btn`);
+  closeBtn.addEventListener(`click`, closeFilmPopup);
 };
 
 export const closeFilmPopup = () => {
-  const activePopup = document.querySelector(`.film-details`);
+  closeBtn.removeEventListener(`click`, closeFilmPopup);
   activePopup.remove();
 };
