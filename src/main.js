@@ -12,10 +12,10 @@ import {getStatistic, fillStatistic} from "./database/statistic";
 import {showFilmPopup} from "./services/popup-service.js";
 import {randomFromArray} from "./utils/random.js";
 
-const FILM_FULL_COUNT = 15;
+const FILM_FULL_COUNT = 20;
 const SHOW_MORE_COUNT = 5;
 
-let filmShowCount = SHOW_MORE_COUNT;
+let filmOffsetShow = SHOW_MORE_COUNT;
 
 const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
@@ -55,10 +55,25 @@ const filmListMostCommented = document.querySelector(
 );
 
 const showFilmsList = () => {
-  allFilms.slice(0, filmShowCount).forEach((film) => {
-    render(filmList, getFilmCardComponent(film));
-  });
+  allFilms
+    .slice(filmOffsetShow - SHOW_MORE_COUNT, filmOffsetShow)
+    .forEach((film) => {
+      render(filmList, getFilmCardComponent(film));
+    });
 };
+
+const showMoreButton = document.querySelector(`.films-list__show-more`);
+
+showMoreButton.addEventListener(`click`, () => {
+  filmOffsetShow += SHOW_MORE_COUNT;
+
+  showFilmsList();
+
+  if (filmOffsetShow === allFilms.length) {
+    showMoreButton.style.display = `none`;
+    return;
+  }
+});
 
 showFilmsList();
 
