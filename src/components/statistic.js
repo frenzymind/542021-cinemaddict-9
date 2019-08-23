@@ -1,5 +1,29 @@
-export const getStatisticComponent = (statistic) => {
-  return `<section class="statistic">
+import {createElement} from "../utils/dom.js";
+
+export class Statistic {
+  constructor(statistic) {
+    this._element = null;
+
+    this._totalWatched = statistic.totalWatched;
+    this._totalDurationHour = statistic.totalDurationHour;
+    this._totalDurationMinute = statistic.totalDurationMinute;
+    this._topGenre = statistic.topGenre;
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return `<section class="statistic">
   <p class="statistic__rank">
     Your rank
     <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -29,20 +53,20 @@ export const getStatisticComponent = (statistic) => {
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">You watched</h4>
       <p class="statistic__item-text">${
-  statistic.totalWatched
+  this._totalWatched
 } <span class="statistic__item-description">movies</span></p>
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Total duration</h4>
       <p class="statistic__item-text">${
-  statistic.totalDurationHour
+  this._totalDurationHour
 } <span class="statistic__item-description">h</span> ${
-  statistic.totalDurationMinute
+  this._totalDurationMinute
 } <span class="statistic__item-description">m</span></p>
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>
-      <p class="statistic__item-text">${statistic.topGenre}</p>
+      <p class="statistic__item-text">${this._topGenre}</p>
     </li>
   </ul>
 
@@ -51,4 +75,5 @@ export const getStatisticComponent = (statistic) => {
   </div>
 
 </section>`;
-};
+  }
+}

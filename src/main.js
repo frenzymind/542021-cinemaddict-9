@@ -1,11 +1,11 @@
-import {getSearch} from "./components/search.js";
+import {Search} from "./components/search.js";
 import {getProfile} from "./components/profile.js";
-import {getMenu} from "./components/menu.js";
-import {getStatisticComponent} from "./components/statistic.js";
+import {Menu} from "./components/menu.js";
+import {Statistic} from "./components/statistic.js";
 import {getFilmLayout} from "./components/film-layout.js";
 import {FilmCard} from "./components/film-card.js";
 import {FilmPopup} from "./components/film-popup.js";
-import {getSortBar} from "./components/sort-bar.js";
+import {SortBar} from "./components/sort-bar.js";
 import {getFilmCard} from "./database/film-card.js";
 import {getFilter, fillFilter} from "./database/filter.js";
 import {getStatistic, fillStatistic} from "./database/statistic";
@@ -34,12 +34,20 @@ fillFilter(filter, allFilms);
 const statistic = getStatistic();
 fillStatistic(statistic, allFilms);
 
-// render(header, getSearch());
-// render(header, getProfile());
+const SearchBar = new Search();
+render(header, SearchBar.getElement());
 
-// render(main, getMenu(filter));
-// render(main, getSortBar());
-// render(main, getStatisticComponent(statistic));
+render(header, getProfile());
+
+const menu = new Menu(filter);
+render(main, menu.getElement());
+
+const sortBar = new SortBar();
+render(main, sortBar.getElement());
+
+const statisticComponent = new Statistic(statistic);
+render(main, statisticComponent.getElement());
+
 render(main, getFilmLayout());
 
 const filmList = document.querySelector(`.films-list__container`);
@@ -86,27 +94,15 @@ showMoreButton.addEventListener(`click`, () => {
 
 showFilmsList();
 
-// new Array(2)
-//   .fill(``)
-//   .map(() =>
-//     render(filmListTopRated, getFilmCardComponent(randomFromArray(allFilms)))
-//   );
+new Array(2).fill(``).map(() => {
+  const filmCard = new FilmCard(randomFromArray(allFilms));
+  render(filmListTopRated, filmCard.getElement());
+});
 
-// new Array(2)
-//   .fill(``)
-//   .forEach(() =>
-//     render(
-//         filmListMostCommented,
-//         getFilmCardComponent(randomFromArray(allFilms))
-//     )
-//   );
-
-// const films = document.querySelectorAll(
-//     `.films-list .films-list__container .film-card`
-// );
-
-// films.forEach((film, index) =>
-//   film.addEventListener(`click`, () => {
-//     showFilmPopup(main, getFilmPopup(allFilms[index]));
-//   })
-// );
+new Array(2).fill(``).map(() => {
+  const filmCard = new FilmCard(randomFromArray(allFilms));
+  render(
+      filmListMostCommented,
+      render(filmListMostCommented, filmCard.getElement())
+  );
+});
