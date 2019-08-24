@@ -1,13 +1,13 @@
 import {createElement} from "../utils/dom.js";
 
 export class Statistic {
-  constructor(statistic) {
+  constructor() {
     this._element = null;
 
-    this._totalWatched = statistic.totalWatched;
-    this._totalDurationHour = statistic.totalDurationHour;
-    this._totalDurationMinute = statistic.totalDurationMinute;
-    this._topGenre = statistic.topGenre;
+    this._totalWatched = null;
+    this._totalDurationHour = null;
+    this._totalDurationMinute = null;
+    this._topGenre = null;
   }
 
   getElement() {
@@ -75,5 +75,31 @@ export class Statistic {
   </div>
 
 </section>`;
+  }
+
+  fillStatistic(films) {
+    const countByGenres = new Map();
+
+    films.forEach((film) => {
+      if (film.watched === true) {
+        this._totalWatched++;
+      }
+      this._totalDurationHour += film.durationHour;
+      this._totalDurationMinute += film.durationMinute;
+
+      film.genre.forEach((filmGenre) => {
+        if (countByGenres.has(filmGenre)) {
+          countByGenres.set(filmGenre, countByGenres.get(filmGenre) + 1);
+        } else {
+          countByGenres.set(filmGenre, 1);
+        }
+      });
+    });
+
+    const [topGenre] = Array.from(countByGenres).reduce((acc, value) => {
+      return acc[1] < value[1] ? value : acc;
+    }, countByGenres.entries().next().value);
+
+    this._topGenre = topGenre;
   }
 }

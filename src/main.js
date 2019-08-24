@@ -8,7 +8,6 @@ import {FilmPopup} from "./components/film-popup.js";
 import {SortBar} from "./components/sort-bar.js";
 import {getFilmCard} from "./database/film-card.js";
 import {getFilter, fillFilter} from "./database/filter.js";
-import {getStatistic, fillStatistic} from "./database/statistic";
 import {showFilmPopup} from "./services/popup-service.js";
 import {randomFromArray} from "./utils/random.js";
 
@@ -24,15 +23,10 @@ const main = document.querySelector(`.main`);
 
 let allFilms = [];
 
-new Array(FILM_FULL_COUNT).fill(``).map(() => {
-  allFilms.push(getFilmCard());
-});
+allFilms = new Array(FILM_FULL_COUNT).fill(``).map(() => getFilmCard());
 
 const filter = getFilter();
 fillFilter(filter, allFilms);
-
-const statistic = getStatistic();
-fillStatistic(statistic, allFilms);
 
 const SearchBar = new Search();
 render(header, SearchBar.getElement());
@@ -45,8 +39,9 @@ render(main, menu.getElement());
 const sortBar = new SortBar();
 render(main, sortBar.getElement());
 
-const statisticComponent = new Statistic(statistic);
-render(main, statisticComponent.getElement());
+const statistic = new Statistic();
+statistic.fillStatistic(allFilms);
+render(main, statistic.getElement());
 
 render(main, getFilmLayout());
 
@@ -88,7 +83,6 @@ showMoreButton.addEventListener(`click`, () => {
 
   if (filmOffsetShow === allFilms.length) {
     showMoreButton.style.display = `none`;
-    return;
   }
 });
 
