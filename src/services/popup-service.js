@@ -1,19 +1,23 @@
-let activePopup;
-let closeBtn;
+import {render, unrender} from "../utils/dom.js";
 
-export const showFilmPopup = (container, template) => {
-  if (activePopup !== undefined) {
+let activePopup = null;
+let closeBtn = null;
+
+export const showFilmPopup = (container, filmPopup) => {
+  if (activePopup) {
     closeFilmPopup();
   }
 
-  container.insertAdjacentHTML(`beforeend`, template);
+  render(container, filmPopup.getElement());
 
-  activePopup = document.querySelector(`.film-details`);
-  closeBtn = activePopup.querySelector(`.film-details__close-btn`);
+  activePopup = filmPopup;
+
+  closeBtn = document.querySelector(`.film-details__close-btn`);
   closeBtn.addEventListener(`click`, closeFilmPopup);
 };
 
 export const closeFilmPopup = () => {
   closeBtn.removeEventListener(`click`, closeFilmPopup);
-  activePopup.remove();
+  unrender(activePopup.getElement());
+  activePopup.removeElement();
 };
