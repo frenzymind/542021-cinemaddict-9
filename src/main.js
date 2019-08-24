@@ -8,12 +8,12 @@ import {FilmPopup} from "./components/film-popup.js";
 import {SortBar} from "./components/sort-bar.js";
 import {getFilmCard} from "./database/film-card.js";
 import {getFilter, fillFilter} from "./database/filter.js";
-import {showFilmPopup} from "./services/popup-service.js";
+import {showFilmPopup, closeFilmPopup} from "./services/popup-service.js";
 import {randomFromArray} from "./utils/random.js";
-
+import {getNoFilm} from "./components/no-films";
 import {render} from "./utils/dom.js";
 
-const FILM_FULL_COUNT = 20;
+const FILM_FULL_COUNT = 14;
 const SHOW_MORE_COUNT = 5;
 
 let filmOffsetShow = SHOW_MORE_COUNT;
@@ -57,13 +57,41 @@ const filmListMostCommented = document.querySelector(
     `.films-list--extra:nth-of-type(3) .films-list__container`
 );
 
+const checkFilmsExist = () => {
+  if (allFilms.length === 0) {
+    render(filmList, getNoFilm());
+  }
+};
+
+const onEscKeyDown = (evt) => {
+  if (evt.key === `Escape` || evt.key === `Esc`) {
+    closeFilmPopup();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  }
+};
+
 const renderFilmCard = (filmMockData) => {
   const filmCard = new FilmCard(filmMockData);
   const filmPopup = new FilmPopup(filmMockData);
 
   filmCard.getElement().addEventListener(`click`, () => {
+    document.addEventListener(`keydown`, onEscKeyDown);
     showFilmPopup(main, filmPopup);
   });
+
+  filmPopup
+    .getElement()
+    .querySelector(`.film-details__comment-input`)
+    .addEventListener(`focus`, () => {
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  filmPopup
+    .getElement()
+    .querySelector(`.film-details__comment-input`)
+    .addEventListener(`blur`, () => {
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
 
   render(filmList, filmCard.getElement());
 };
@@ -76,6 +104,22 @@ const showFilmsList = () => {
     });
 };
 
+const showExtraFilms = () => {
+  if (allFilms.length === 0) {
+    return;
+  }
+
+  new Array(2).fill(``).map(() => {
+    const filmCard = new FilmCard(randomFromArray(allFilms));
+    render(filmListTopRated, filmCard.getElement());
+  });
+
+  new Array(2).fill(``).map(() => {
+    const filmCard = new FilmCard(randomFromArray(allFilms));
+    render(filmListMostCommented, filmCard.getElement());
+  });
+};
+
 const showMoreButton = document.querySelector(`.films-list__show-more`);
 
 showMoreButton.addEventListener(`click`, () => {
@@ -83,19 +127,11 @@ showMoreButton.addEventListener(`click`, () => {
 
   showFilmsList();
 
-  if (filmOffsetShow === allFilms.length) {
+  if (filmOffsetShow >= allFilms.length) {
     showMoreButton.style.display = `none`;
   }
 });
 
 showFilmsList();
-
-new Array(2).fill(``).map(() => {
-  const filmCard = new FilmCard(randomFromArray(allFilms));
-  render(filmListTopRated, filmCard.getElement());
-});
-
-new Array(2).fill(``).map(() => {
-  const filmCard = new FilmCard(randomFromArray(allFilms));
-  render(filmListMostCommented, filmCard.getElement());
-});
+showExtraFilms();
+checkFilmsExist();

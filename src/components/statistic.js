@@ -78,6 +78,10 @@ export class Statistic {
   }
 
   fillStatistic(films) {
+    if (films.length === 0) {
+      return;
+    }
+
     const countByGenres = new Map();
 
     films.forEach((film) => {
