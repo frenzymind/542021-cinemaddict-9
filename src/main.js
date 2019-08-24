@@ -31,7 +31,9 @@ fillFilter(filter, allFilms);
 const SearchBar = new Search();
 render(header, SearchBar.getElement());
 
-render(header, getProfile());
+const profile = getProfile();
+
+render(header, profile);
 
 const menu = new Menu(filter);
 render(main, menu.getElement());
@@ -95,8 +97,5 @@ new Array(2).fill(``).map(() => {
 
 new Array(2).fill(``).map(() => {
   const filmCard = new FilmCard(randomFromArray(allFilms));
-  render(
-      filmListMostCommented,
-      render(filmListMostCommented, filmCard.getElement())
-  );
+  render(filmListMostCommented, filmCard.getElement());
 });
