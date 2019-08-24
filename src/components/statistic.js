@@ -85,7 +85,7 @@ export class Statistic {
     const countByGenres = new Map();
 
     films.forEach((film) => {
-      if (film.watched === true) {
+      if (film.watched) {
         this._totalWatched++;
       }
       this._totalDurationHour += film.durationHour;
