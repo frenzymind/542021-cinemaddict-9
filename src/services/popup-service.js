@@ -1,14 +1,16 @@
-import {render, unrender} from "../utils/dom.js";
+import {render, unrender} from '../utils/dom.js';
+
+const body = document.querySelector(`body`);
 
 let activePopup = null;
 let closeBtn = null;
 
-export const showFilmPopup = (container, filmPopup) => {
+export const showFilmPopup = (filmPopup) => {
   if (activePopup) {
     closeFilmPopup();
   }
 
-  render(container, filmPopup.getElement());
+  render(body, filmPopup.getElement());
 
   activePopup = filmPopup;
 
