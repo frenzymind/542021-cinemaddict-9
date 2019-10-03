@@ -1,25 +1,13 @@
-import {createElement} from "../utils/dom.js";
+import {AbstractComponent} from './abstract-component.js';
 
-export class Statistic {
+export class Statistic extends AbstractComponent {
   constructor() {
-    this._element = null;
+    super();
 
     this._totalWatched = null;
     this._totalDurationHour = null;
     this._totalDurationMinute = null;
     this._topGenre = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {
@@ -52,17 +40,11 @@ export class Statistic {
   <ul class="statistic__text-list">
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">You watched</h4>
-      <p class="statistic__item-text">${
-  this._totalWatched
-} <span class="statistic__item-description">movies</span></p>
+      <p class="statistic__item-text">${this._totalWatched} <span class="statistic__item-description">movies</span></p>
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Total duration</h4>
-      <p class="statistic__item-text">${
-  this._totalDurationHour
-} <span class="statistic__item-description">h</span> ${
-  this._totalDurationMinute
-} <span class="statistic__item-description">m</span></p>
+      <p class="statistic__item-text">${this._totalDurationHour} <span class="statistic__item-description">h</span> ${this._totalDurationMinute} <span class="statistic__item-description">m</span></p>
     </li>
     <li class="statistic__text-item">
       <h4 class="statistic__item-title">Top genre</h4>

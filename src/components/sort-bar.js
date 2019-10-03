@@ -1,20 +1,8 @@
-import {createElement} from "../utils/dom.js";
+import {AbstractComponent} from './abstract-component.js';
 
-export class SortBar {
+export class SortBar extends AbstractComponent {
   constructor() {
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
