@@ -1,12 +1,12 @@
-import {FilmCard} from '../components/film-card.js';
-import {FilmPopup} from '../components/film-popup.js';
-import {showFilmPopup, closeFilmPopup} from '../services/popup-service.js';
-import {render} from '../utils/dom.js';
-import {randomFromArray} from '../utils/random.js';
-import {getFilmLayout} from '../components/film-layout.js';
-import {getNoFilm} from '../components/no-films';
-import {SortBar} from '../components/sort-bar.js';
-import {MovieController} from './movie.js';
+import {FilmCard} from "../components/film-card.js";
+import {FilmPopup} from "../components/film-popup.js";
+import {showFilmPopup, closeFilmPopup} from "../services/popup-service.js";
+import {render} from "../utils/dom.js";
+import {randomFromArray} from "../utils/random.js";
+import {getFilmLayout} from "../components/film-layout.js";
+import {getNoFilm} from "../components/no-films";
+import {SortBar} from "../components/sort-bar.js";
+import {MovieController} from "./movie.js";
 
 const SHOW_MORE_COUNT = 5;
 
@@ -120,15 +120,25 @@ export class PageController {
         break;
     }
 
-    this._filmListContainer.innerHTML = ``;
-    filmOffsetShow = SHOW_MORE_COUNT;
-    this._showMoreButton.style.display = `block`;
+    this._resetPage();
 
     this.showFilmsList();
   }
 
   _onDataChange(newFilmMock) {
     console.log(`_onDataChange`, newFilmMock);
+    this._resetPage();
+    this.showFilmsList();
+    this.showFilmsExtra();
+  }
+
+  _resetPage() {
+    this._filmListContainer.innerHTML = ``;
+    this._filmMostContainer.innerHTML = ``;
+    this._filmTopContainer.innerHTML = ``;
+
+    filmOffsetShow = SHOW_MORE_COUNT;
+    this._showMoreButton.style.display = `block`;
   }
 
   _renderFilmCard(container, filmMockData) {

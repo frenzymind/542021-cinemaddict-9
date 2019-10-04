@@ -1,4 +1,4 @@
-import {AbstractComponent} from './abstract-component.js';
+import {AbstractComponent} from "./abstract-component.js";
 
 export class FilmCard extends AbstractComponent {
   constructor(film) {
@@ -36,7 +36,7 @@ export class FilmCard extends AbstractComponent {
   <a class="film-card__comments">${this._commentsCount} comments</a>
   <form class="film-card__controls">
     <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${
-  this.watchList ? `film-card__controls-item--active` : ``
+  this._watchList ? `film-card__controls-item--active` : ``
 }">Add to watchlist</button>
     <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${
   this._watched ? `film-card__controls-item--active` : ``

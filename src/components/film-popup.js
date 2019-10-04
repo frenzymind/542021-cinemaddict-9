@@ -1,5 +1,5 @@
-import {getFilmCardCommentComponent} from './film-card-comment.js';
-import {AbstractComponent} from './abstract-component.js';
+import {getFilmCardCommentComponent} from "./film-card-comment.js";
+import {AbstractComponent} from "./abstract-component.js";
 
 export class FilmPopup extends AbstractComponent {
   constructor(film) {
@@ -93,24 +93,26 @@ export class FilmPopup extends AbstractComponent {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist" ${
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${
   this._watchList === true ? `checked` : ``
-}>Add to watchlist</label>
+}>
+          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist" >Add to watchlist</label>
 
           <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${
   this._watched === true ? `checked` : ``
 }>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-          <label for="favorite" class="film-details__control-label film-details__control-label--favorite ${
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${
   this._favorite === true ? `checked` : ``
-}">Add to favorites</label>
+}>
+          <label for="favorite" class="film-details__control-label film-details__control-label--favorite ">Add to favorites</label>
         </section>
       </div>
 
-      <div class="form-details__middle-container">
+      <div class="form-details__middle-container" ${
+  !this._watched ? `style="display:none"` : ``
+}>
         <section class="film-details__user-rating-wrap">
           <div class="film-details__user-rating-controls">
             <button class="film-details__watched-reset" type="button">Undo</button>
