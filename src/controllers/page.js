@@ -1,11 +1,12 @@
-import {FilmCard} from "../components/film-card.js";
-import {FilmPopup} from "../components/film-popup.js";
-import {showFilmPopup, closeFilmPopup} from "../services/popup-service.js";
-import {render} from "../utils/dom.js";
-import {randomFromArray} from "../utils/random.js";
-import {getFilmLayout} from "../components/film-layout.js";
-import {getNoFilm} from "../components/no-films";
-import {SortBar} from "../components/sort-bar.js";
+import {FilmCard} from '../components/film-card.js';
+import {FilmPopup} from '../components/film-popup.js';
+import {showFilmPopup, closeFilmPopup} from '../services/popup-service.js';
+import {render} from '../utils/dom.js';
+import {randomFromArray} from '../utils/random.js';
+import {getFilmLayout} from '../components/film-layout.js';
+import {getNoFilm} from '../components/no-films';
+import {SortBar} from '../components/sort-bar.js';
+import {MovieController} from './movie.js';
 
 const SHOW_MORE_COUNT = 5;
 
@@ -126,33 +127,17 @@ export class PageController {
     this.showFilmsList();
   }
 
+  _onDataChange(newFilmMock) {
+    console.log(`_onDataChange`, newFilmMock);
+  }
+
   _renderFilmCard(container, filmMockData) {
-    const filmCard = new FilmCard(filmMockData);
-    const filmPopup = new FilmPopup(filmMockData);
+    const movieController = new MovieController(
+        container,
+        filmMockData,
+        this._onDataChange.bind(this)
+    );
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        closeFilmPopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    filmCard.getElement().addEventListener(`click`, () => {
-      document.addEventListener(`keydown`, onEscKeyDown);
-      showFilmPopup(filmPopup);
-    });
-    filmPopup
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-    filmPopup
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-    render(container, filmCard.getElement());
+    movieController.init();
   }
 }
