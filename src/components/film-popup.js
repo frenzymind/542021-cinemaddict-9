@@ -1,5 +1,6 @@
-import {getFilmCardCommentComponent} from './film-card-comment.js';
-import {AbstractComponent} from './abstract-component.js';
+import {getFilmCardCommentComponent} from "./film-card-comment.js";
+import {AbstractComponent} from "./abstract-component.js";
+import {createElement} from "../utils/dom.js";
 
 export class FilmPopup extends AbstractComponent {
   constructor(film) {
@@ -17,6 +18,41 @@ export class FilmPopup extends AbstractComponent {
     this._favorite = film.favorite;
     this._commentsCount = film.commentsCount;
     this._comments = film.comments;
+
+    this._newComment = this.getElement().querySelector(
+        `.film-details__new-comment`
+    );
+
+    this._newComment.querySelectorAll(`input`).forEach((emoji) => {
+      emoji.addEventListener(`click`, (evt) => {
+        this._setEmoji(evt.target.value);
+      });
+    });
+
+    this._newCommentSelectedEmoji = this._newComment.querySelector(
+        `.film-details__add-emoji-label`
+    );
+  }
+
+  _setEmoji(value) {
+    const emojeTemplate = `<img src="./images/emoji/${value}.png" width="55" height="55" alt="emoji">`;
+    this._newCommentSelectedEmoji.innerHTML = emojeTemplate;
+  }
+
+  set _onEscKeyDown(cb) {
+    document.addEventListener(`keydown`, cb);
+
+    this._element
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`focus`, () => {
+        document.removeEventListener(`keydown`, cb);
+      });
+
+    this._element
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`blur`, () => {
+        document.addEventListener(`keydown`, cb);
+      });
   }
 
   getTemplate() {
@@ -93,24 +129,26 @@ export class FilmPopup extends AbstractComponent {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist" ${
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${
   this._watchList === true ? `checked` : ``
-}>Add to watchlist</label>
+}>
+          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist" >Add to watchlist</label>
 
           <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${
   this._watched === true ? `checked` : ``
 }>
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-          <label for="favorite" class="film-details__control-label film-details__control-label--favorite ${
+          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${
   this._favorite === true ? `checked` : ``
-}">Add to favorites</label>
+}>
+          <label for="favorite" class="film-details__control-label film-details__control-label--favorite ">Add to favorites</label>
         </section>
       </div>
 
-      <div class="form-details__middle-container">
+      <div class="form-details__middle-container" ${
+  !this._watched ? `style="display:none"` : ``
+}>
         <section class="film-details__user-rating-wrap">
           <div class="film-details__user-rating-controls">
             <button class="film-details__watched-reset" type="button">Undo</button>
@@ -173,36 +211,30 @@ export class FilmPopup extends AbstractComponent {
             .map((comment) => getFilmCardCommentComponent(comment))
             .join(``)}
           </ul>
-
-          <div class="film-details__new-comment">
-            <div for="add-emoji" class="film-details__add-emoji-label"></div>
-
-            <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-            </label>
-
-            <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
-              <label class="film-details__emoji-label" for="emoji-gpuke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
-            </div>
-          </div>
+      <div class="film-details__new-comment">
+      <div for="add-emoji" class="film-details__add-emoji-label"></div>
+      <label class="film-details__comment-label">
+        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+      </label>
+      <div class="film-details__emoji-list">
+        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+        <label class="film-details__emoji-label" for="emoji-smile">
+          <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+        </label>
+        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+        <label class="film-details__emoji-label" for="emoji-sleeping">
+          <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+        </label>
+        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke">
+        <label class="film-details__emoji-label" for="emoji-gpuke">
+          <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+        </label>
+        <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+        <label class="film-details__emoji-label" for="emoji-angry">
+          <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+        </label>
+      </div>
+    </div>
         </section>
       </div>
     </form>
