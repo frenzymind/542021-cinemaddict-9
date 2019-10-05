@@ -28,7 +28,6 @@ export class MovieController {
 
     filmCard.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `BUTTON`) {
-        document.addEventListener(`keydown`, onEscKeyDown);
         showFilmPopup(filmPopup);
       }
     });
@@ -48,19 +47,7 @@ export class MovieController {
       .querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, this._onAddToFavorite.bind(this));
 
-    filmPopup
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-
-    filmPopup
-      .getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+    filmPopup._onEscKeyDown = onEscKeyDown.bind(this);
 
     filmPopup
       .getElement()
@@ -82,7 +69,7 @@ export class MovieController {
 
   _onAddToWatchList() {
     this._filmMock.watchList = !this._filmMock.watchList;
-    this._onDataChange(this._filmMock);
+    this._onDataChange();
   }
 
   _onAddToWatched() {
@@ -90,11 +77,11 @@ export class MovieController {
     this._userRatingContainer.style.display = this._filmMock.watched
       ? `block`
       : `none`;
-    this._onDataChange(this._filmMock);
+    this._onDataChange();
   }
 
   _onAddToFavorite() {
     this._filmMock.favorite = !this._filmMock.favorite;
-    this._onDataChange(this._filmMock);
+    this._onDataChange();
   }
 }
