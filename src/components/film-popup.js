@@ -1,6 +1,5 @@
 import {getFilmCardCommentComponent} from "./film-card-comment.js";
 import {AbstractComponent} from "./abstract-component.js";
-import {createElement} from "../utils/dom.js";
 
 export class FilmPopup extends AbstractComponent {
   constructor(film) {
