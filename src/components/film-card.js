@@ -1,4 +1,5 @@
 import {AbstractComponent} from "./abstract-component.js";
+const moment = require(`moment`);
 
 export class FilmCard extends AbstractComponent {
   constructor(film) {
@@ -23,7 +24,7 @@ export class FilmCard extends AbstractComponent {
   <h3 class="film-card__title">${this._title}</h3>
   <p class="film-card__rating">${this._rating}</p>
   <p class="film-card__info">
-    <span class="film-card__year">${this._year}</span>
+    <span class="film-card__year">${moment(this._year).format(`YYYY`)}</span>
     <span class="film-card__duration">${this._durationHour}h ${
   this._durationMinute
 }m</span>
