@@ -1,6 +1,7 @@
 import {getFilmCardCommentComponent} from "./film-card-comment.js";
 import {AbstractComponent} from "./abstract-component.js";
-import {createElement} from "../utils/dom.js";
+
+const moment = require(`moment`);
 
 export class FilmPopup extends AbstractComponent {
   constructor(film) {
@@ -97,7 +98,9 @@ export class FilmPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">30 March ${this._year}</td>
+                <td class="film-details__cell">${moment(this._year).format(
+      `DD MMMM YYYY`
+  )}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>

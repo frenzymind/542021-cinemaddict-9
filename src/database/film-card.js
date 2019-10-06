@@ -1,6 +1,11 @@
 import {getFilmModel} from "../models/film-card.js";
 import {getCommentModel} from "../models/comment.js";
-import {randomRange, randomFromArray, randomBool} from "../utils/random.js";
+import {
+  randomRange,
+  randomFromArray,
+  randomBool,
+  randomDate
+} from "../utils/random.js";
 
 const TITLES = [
   `Молчание ягнят`,
@@ -58,7 +63,7 @@ export const getFilmCard = () => {
 
   film.title = randomFromArray(TITLES);
   film.rating = randomRange(0, 11);
-  film.year = randomRange(2001, 2019);
+  film.year = randomDate(new Date(2009, 0, 1), new Date()).getTime(); // randomRange(2001, 2019);
   film.durationHour = randomRange(0, 2);
   film.durationMinute = randomRange(20, 51);
   film.genre.add(randomFromArray(GENRES));
@@ -83,7 +88,7 @@ export const getFilmCard = () => {
     comment.emoji = randomFromArray(EMOJI);
     comment.text = randomFromArray(DESCRIPTIONS);
     comment.author = `Quentin Tarantino`;
-    comment.daysAgo = randomRange(0, 3);
+    comment.daysAgo = randomDate(new Date(2009, 0, 1), new Date()).getTime(); // randomRange(0, 3);
 
     film.comments.push(comment);
   });

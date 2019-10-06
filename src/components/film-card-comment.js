@@ -1,3 +1,5 @@
+const moment = require(`moment`);
+
 export const getFilmCardCommentComponent = (comment) => {
   return `
     <li class="film-details__comment">
@@ -15,7 +17,7 @@ export const getFilmCardCommentComponent = (comment) => {
                     <span class="film-details__comment-day">${
   comment.daysAgo === 0
     ? `today`
-    : `${comment.daysAgo} days ago`
+    : `${moment(comment.daysAgo).format(`YY/MM/DD HH: MM`)}`
 } </span>
                     <button class="film-details__comment-delete">Delete</button>
                   </p>
