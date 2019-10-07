@@ -1,9 +1,9 @@
-import {render} from '../utils/dom.js';
-import {randomFromArray} from '../utils/random.js';
-import {getFilmLayout} from '../components/film-layout.js';
-import {getNoFilm} from '../components/no-films';
-import {SortBar} from '../components/sort-bar.js';
-import {MovieController} from './movie.js';
+import {render} from "../utils/dom.js";
+import {randomFromArray} from "../utils/random.js";
+import {getFilmLayout} from "../components/film-layout.js";
+import {getNoFilm} from "../components/no-films";
+import {SortBar} from "../components/sort-bar.js";
+import {MovieController} from "./movie.js";
 
 const SHOW_MORE_COUNT = 5;
 
@@ -98,10 +98,11 @@ export class PageController {
       });
   }
 
-  _updatePageFilms() {
-    this._films = this._filterFilms(this._films, this._currentFilter);
-
-    this._films = this._sortFilms(this._films, this._currentSort);
+  _updatePageFilms(isSearch = false) {
+    if (!isSearch) {
+      this._films = this._filterFilms(this._films, this._currentFilter);
+      this._films = this._sortFilms(this._films, this._currentSort);
+    }
 
     this._resetPage();
     this.renderFilms();
@@ -193,5 +194,11 @@ export class PageController {
     this._statisticContainer.classList.toggle(`visually-hidden`);
   }
 
-  onSearchKeyPress() {}
+  onSearch(searchText) {
+    this._films = this._defaultFilms.filter((film) =>
+      film.title.match(searchText) ? true : false
+    );
+
+    this._updatePageFilms(true);
+  }
 }
