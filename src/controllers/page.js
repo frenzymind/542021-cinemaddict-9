@@ -1,9 +1,9 @@
-import {render} from "../utils/dom.js";
-import {randomFromArray} from "../utils/random.js";
-import {getFilmLayout} from "../components/film-layout.js";
-import {getNoFilm} from "../components/no-films";
-import {SortBar} from "../components/sort-bar.js";
-import {MovieController} from "./movie.js";
+import {render} from '../utils/dom.js';
+import {randomFromArray} from '../utils/random.js';
+import {getFilmLayout} from '../components/film-layout.js';
+import {getNoFilm} from '../components/no-films';
+import {SortBar} from '../components/sort-bar.js';
+import {MovieController} from './movie.js';
 
 const SHOW_MORE_COUNT = 5;
 
@@ -29,6 +29,7 @@ export class PageController {
     this._filmListContainer = null;
     this._filmTopContainer = null;
     this._filmMostContainer = null;
+    this._statisticContainer = null;
 
     this._showMoreButton = null;
 
@@ -73,6 +74,12 @@ export class PageController {
         this._showMoreButton.style.display = `none`;
       }
     });
+
+    this._statisticContainer = this._container.querySelector(`.statistic`);
+
+    this._container
+      .querySelector(`.main-navigation__item--additional`)
+      .addEventListener(`click`, this._toggleStatistic.bind(this));
 
     this.renderFilms();
     this.renderFilmsExtra();
@@ -181,4 +188,10 @@ export class PageController {
 
     movieController.init();
   }
+
+  _toggleStatistic() {
+    this._statisticContainer.classList.toggle(`visually-hidden`);
+  }
+
+  onSearchKeyPress() {}
 }

@@ -62,7 +62,7 @@ export const getFilmCard = () => {
   const film = getFilmModel();
 
   film.title = randomFromArray(TITLES);
-  film.rating = randomRange(0, 11);
+  film.rating = randomRange(1, 10);
   film.year = randomDate(new Date(2009, 0, 1), new Date()).getTime(); // randomRange(2001, 2019);
   film.durationHour = randomRange(0, 2);
   film.durationMinute = randomRange(20, 51);
