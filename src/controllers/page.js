@@ -29,6 +29,7 @@ export class PageController {
     this._filmListContainer = null;
     this._filmTopContainer = null;
     this._filmMostContainer = null;
+    this._statisticContainer = null;
 
     this._showMoreButton = null;
 
@@ -74,6 +75,12 @@ export class PageController {
       }
     });
 
+    this._statisticContainer = this._container.querySelector(`.statistic`);
+
+    this._container
+      .querySelector(`.main-navigation__item--additional`)
+      .addEventListener(`click`, this._toggleStatistic.bind(this));
+
     this.renderFilms();
     this.renderFilmsExtra();
   }
@@ -91,10 +98,11 @@ export class PageController {
       });
   }
 
-  _updatePageFilms() {
-    this._films = this._filterFilms(this._films, this._currentFilter);
-
-    this._films = this._sortFilms(this._films, this._currentSort);
+  _updatePageFilms(isSearch = false) {
+    if (!isSearch) {
+      this._films = this._filterFilms(this._films, this._currentFilter);
+      this._films = this._sortFilms(this._films, this._currentSort);
+    }
 
     this._resetPage();
     this.renderFilms();
@@ -180,5 +188,17 @@ export class PageController {
     );
 
     movieController.init();
+  }
+
+  _toggleStatistic() {
+    this._statisticContainer.classList.toggle(`visually-hidden`);
+  }
+
+  onSearch(searchText) {
+    this._films = this._defaultFilms.filter((film) =>
+      film.title.match(searchText) ? true : false
+    );
+
+    this._updatePageFilms(true);
   }
 }

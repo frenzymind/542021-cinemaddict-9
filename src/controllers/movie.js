@@ -1,7 +1,7 @@
-import {FilmCard} from "../components/film-card.js";
-import {FilmPopup} from "../components/film-popup.js";
-import {showFilmPopup, closeFilmPopup} from "../services/popup-service.js";
-import {render} from "../utils/dom.js";
+import {FilmCard} from '../components/film-card.js';
+import {FilmPopup} from '../components/film-popup.js';
+import {showFilmPopup, closeFilmPopup} from '../services/popup-service.js';
+import {render} from '../utils/dom.js';
 
 export class MovieController {
   constructor(container, filmMock, onDataChange) {
@@ -13,14 +13,37 @@ export class MovieController {
 
   init() {
     const filmCard = new FilmCard(this._filmMock);
-    const filmPopup = new FilmPopup(this._filmMock);
+    let filmPopup = this._createPopup();
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        closeFilmPopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
+    const onDeleteComment = (commentIndex) => {
+      this._filmMock.commentsCount--;
+
+      this._filmMock.comments = this._filmMock.comments.filter(
+          (_, index) => index !== commentIndex
+      );
+
+      this._onDataChange();
+
+      filmPopup = this._createPopup();
+      filmPopup._onDeleteComment = onDeleteComment.bind(this);
+      filmPopup._onNewComment = onNewComment.bind(this);
+      showFilmPopup(filmPopup);
     };
+
+    const onNewComment = (newComment) => {
+      this._filmMock.commentsCount++;
+      this._filmMock.comments.push(newComment);
+      this._onDataChange();
+
+      filmPopup = this._createPopup();
+      filmPopup._onDeleteComment = onDeleteComment.bind(this);
+      filmPopup._onNewComment = onNewComment.bind(this);
+      showFilmPopup(filmPopup);
+    };
+
+    filmPopup._onDeleteComment = onDeleteComment.bind(this);
+
+    filmPopup._onNewComment = onNewComment.bind(this);
 
     this._userRatingContainer = filmPopup
       .getElement()
@@ -47,6 +70,19 @@ export class MovieController {
       .querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, this._onAddToFavorite.bind(this));
 
+    render(this._container, filmCard.getElement());
+  }
+
+  _createPopup() {
+    const onEscKeyDown = (evt) => {
+      if (evt.key === `Escape` || evt.key === `Esc`) {
+        closeFilmPopup();
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      }
+    };
+
+    const filmPopup = new FilmPopup(this._filmMock);
+
     filmPopup._onEscKeyDown = onEscKeyDown.bind(this);
 
     filmPopup
@@ -64,7 +100,7 @@ export class MovieController {
       .querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, this._onAddToFavorite.bind(this));
 
-    render(this._container, filmCard.getElement());
+    return filmPopup;
   }
 
   _onAddToWatchList() {

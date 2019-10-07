@@ -1,5 +1,6 @@
-import {getFilmCardCommentComponent} from "./film-card-comment.js";
-import {AbstractComponent} from "./abstract-component.js";
+import {getFilmCardCommentComponent} from './film-card-comment.js';
+import {AbstractComponent} from './abstract-component.js';
+import {getCommentModel} from '../models/comment.js';
 
 const moment = require(`moment`);
 
@@ -36,7 +37,7 @@ export class FilmPopup extends AbstractComponent {
   }
 
   _setEmoji(value) {
-    const emojeTemplate = `<img src="./images/emoji/${value}.png" width="55" height="55" alt="emoji">`;
+    const emojeTemplate = `<img src="./images/emoji/${value}.png" data-emoji="./images/emoji/${value}.png" width="55" height="55" alt="emoji">`;
     this._newCommentSelectedEmoji.innerHTML = emojeTemplate;
   }
 
@@ -53,6 +54,50 @@ export class FilmPopup extends AbstractComponent {
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`blur`, () => {
         document.addEventListener(`keydown`, cb);
+      });
+  }
+
+  set _onDeleteComment(cb) {
+    const comments = this.getElement().querySelectorAll(
+        `.film-details__comment`
+    );
+
+    comments.forEach((comment, commentIndex) => {
+      comment
+        .querySelector(`.film-details__comment-delete`)
+        .addEventListener(`click`, (evt) => {
+          evt.preventDefault();
+          cb(commentIndex);
+        });
+    });
+  }
+
+  set _onNewComment(cb) {
+    this._element
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`focus`, () => {
+        document.addEventListener(`keydown`, (evt) => {
+          if (evt.ctrlKey && evt.keyCode === 13) {
+            const newComment = getCommentModel();
+
+            const commentEmoji = this._newCommentSelectedEmoji.querySelector(
+                `img`
+            );
+
+            if (!commentEmoji) {
+              return;
+            }
+
+            newComment.text = this._element.querySelector(
+                `.film-details__comment-input`
+            ).value;
+
+            newComment.emoji = commentEmoji.dataset.emoji;
+            newComment.daysAgo = new Date().getTime();
+
+            cb(newComment);
+          }
+        });
       });
   }
 
