@@ -1,9 +1,13 @@
-import {render} from "../utils/dom.js";
-import {randomFromArray} from "../utils/random.js";
-import {getFilmLayout} from "../components/film-layout.js";
-import {getNoFilm} from "../components/no-films";
-import {SortBar} from "../components/sort-bar.js";
-import {MovieController} from "./movie.js";
+import {render} from '../utils/dom.js';
+import {randomFromArray} from '../utils/random.js';
+import {getFilmLayout} from '../components/film-layout.js';
+import {getNoFilm} from '../components/no-films';
+import {SortBar} from '../components/sort-bar.js';
+import {MovieController} from './movie.js';
+import {Statistic} from '../components/statistic.js';
+
+const Chart = require(`chart.js`);
+const ChartDataLabels = require(`chartjs-plugin-datalabels`);
 
 const SHOW_MORE_COUNT = 5;
 
@@ -30,8 +34,14 @@ export class PageController {
     this._filmTopContainer = null;
     this._filmMostContainer = null;
     this._statisticContainer = null;
+    this._statisticChartContainer = null;
 
+    this._watchListButton = null;
+    this._historyButton = null;
+    this._favoriteButoon = null;
     this._showMoreButton = null;
+
+    this._chart = null;
 
     this._films = films;
     this._defaultFilms = this._films;
@@ -40,9 +50,18 @@ export class PageController {
     this._currentFilter = FILTER_TYPE.ALL;
 
     this._sortBar = new SortBar();
+    this._statistic = new Statistic();
   }
 
   init() {
+    this._statistic.fillStatistic(this._films);
+    render(this._container, this._statistic.getElement());
+
+    this._statisticContainer = this._container.querySelector(`.statistic`);
+    this._statisticChartContainer = this._container.querySelector(
+        `.statistic__chart`
+    );
+
     render(this._container, this._sortBar.getElement());
 
     this._sortBar._onSortLinkClick = this._onSortLinkClick.bind(this);
@@ -61,6 +80,27 @@ export class PageController {
         `.films-list--extra:nth-of-type(3) .films-list__container`
     );
 
+    this._watchListButton = this._container
+      .querySelector(`a[href="#watchlist"]`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._onFilterLinkClick(FILTER_TYPE.WATCH_LIST);
+      });
+
+    this._historyButton = this._container
+      .querySelector(`a[href="#history"]`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._onFilterLinkClick(FILTER_TYPE.HISTORY);
+      });
+
+    this._favoriteButoon = this._container
+      .querySelector(`a[href="#favorites"]`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._onFilterLinkClick(FILTER_TYPE.FAVORITES);
+      });
+
     this._showMoreButton = this._container.querySelector(
         `.films-list__show-more`
     );
@@ -74,8 +114,6 @@ export class PageController {
         this._showMoreButton.style.display = `none`;
       }
     });
-
-    this._statisticContainer = this._container.querySelector(`.statistic`);
 
     this._container
       .querySelector(`.main-navigation__item--additional`)
@@ -91,6 +129,8 @@ export class PageController {
       return;
     }
 
+    this._createChart();
+
     this._films
       .slice(filmOffsetShow - SHOW_MORE_COUNT, filmOffsetShow)
       .forEach((filmMock) => {
@@ -98,9 +138,82 @@ export class PageController {
       });
   }
 
+  _createChart() {
+    // const canvasContext = this._statisticChartContainer.getContext(`2d`);
+    // canvasContext.clearRect(0, 0, canvasContext.width, canvasContext.height);
+    if (this._chart) {
+      this._chart.destroy();
+    }
+
+    const countByGenres = new Map();
+
+    this._films.forEach((film) => {
+      if (film.watched) {
+        film.genre.forEach((filmGenre) => {
+          if (countByGenres.has(filmGenre)) {
+            countByGenres.set(filmGenre, countByGenres.get(filmGenre) + 1);
+          } else {
+            countByGenres.set(filmGenre, 1);
+          }
+        });
+      }
+    });
+
+    this._chart = new Chart(this._statisticChartContainer, {
+      plugins: [ChartDataLabels],
+      type: `horizontalBar`,
+      data: {
+        labels: [...Array.from(countByGenres.keys())],
+        datasets: [
+          {
+            data: [...Array.from(countByGenres.values())],
+            backgroundColor: `#ffe800`
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          datalabels: {
+            font: {
+              size: 22,
+              weight: `bold`
+            },
+            color: `#fff`,
+            align: `start`
+          }
+        },
+        title: {
+          display: false
+        },
+        legend: {
+          display: false
+        },
+        scales: {
+          xAxes: [
+            {
+              ticks: {
+                display: false,
+                beginAtZero: true
+              }
+            }
+          ],
+          yAxes: [
+            {
+              ticks: {
+                fontColor: `#fff`,
+                fontSize: 22,
+                padding: 25
+              }
+            }
+          ]
+        }
+      }
+    });
+  }
+
   _updatePageFilms(isSearch = false) {
     if (!isSearch) {
-      this._films = this._filterFilms(this._films, this._currentFilter);
+      this._films = this._filterFilms(this._defaultFilms, this._currentFilter);
       this._films = this._sortFilms(this._films, this._currentSort);
     }
 
@@ -139,7 +252,10 @@ export class PageController {
 
     switch (sortType) {
       case SORT_TYPE.DEFAULT:
-        sortedFilms = this._defaultFilms.slice();
+        if (this._currentFilter === FILTER_TYPE.ALL) {
+          sortedFilms = this._defaultFilms.slice();
+        }
+
         break;
       case SORT_TYPE.DATE:
         sortedFilms.sort((a, b) => b.year - a.year);
@@ -153,18 +269,24 @@ export class PageController {
   }
 
   _filterFilms(films, filterType) {
+    let filtredFilms = [];
+
     switch (filterType) {
       case FILTER_TYPE.ALL:
+        filtredFilms = this._defaultFilms.slice();
         break;
       case FILTER_TYPE.WATCH_LIST:
+        filtredFilms = films.filter((film) => film.watchList);
         break;
       case FILTER_TYPE.HISTORY:
+        filtredFilms = films.filter((film) => film.watched);
         break;
       case FILTER_TYPE.FAVORITES:
+        filtredFilms = films.filter((film) => film.favorite);
         break;
     }
 
-    return films.slice();
+    return filtredFilms;
   }
 
   _onDataChange() {

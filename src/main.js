@@ -1,6 +1,6 @@
 import {getProfile} from './components/profile.js';
 import {Menu} from './components/menu.js';
-import {Statistic} from './components/statistic.js';
+
 import {getFilmCard} from './database/film-card.js';
 import {getFilter, fillFilter} from './database/filter.js';
 import {render} from './utils/dom.js';
@@ -20,9 +20,6 @@ fillFilter(filter, allFilms);
 const menu = new Menu(filter);
 const profile = getProfile();
 
-const statistic = new Statistic();
-statistic.fillStatistic(allFilms);
-
 const pageController = new PageController(main, allFilms);
 const searchController = new SearchController(
     header,
@@ -35,7 +32,5 @@ searchController.init();
 render(header, profile);
 
 render(main, menu.getElement());
-
-render(main, statistic.getElement());
 
 pageController.init();
