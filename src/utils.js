@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 const ANIMATION_TIMEOUT = 600;
 
 export const Position = {
@@ -7,7 +9,7 @@ export const Position = {
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
+  newElement.innerHTML = DOMPurify.sanitize(template);
   return newElement.firstChild;
 };
 
@@ -29,7 +31,11 @@ export const unrender = (element) => {
 };
 
 export const encodeHTML = (s) => {
-  return s.replace(/&/g, `&amp;`).replace(/</g, `&lt;`).replace(/>/g, `&rt;`).replace(/"/g, `&quot;`);
+  return s
+    .replace(/&/g, `&amp;`)
+    .replace(/</g, `&lt;`)
+    .replace(/>/g, `&rt;`)
+    .replace(/"/g, `&quot;`);
 };
 
 export const formatDuration = (duration) => {
