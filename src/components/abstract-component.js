@@ -1,26 +1,29 @@
-import {unrender, createElement} from "../utils";
+import {createElement} from '../utils/dom.js';
 
-export default class AbstractComponet {
+export class AbstractComponent {
   constructor() {
-    if (new.target === AbstractComponet) {
-      throw new Error(`Can't instantiate an AbstractComponent, only concrete one.`);
+    if (new.target === AbstractComponent) {
+      throw new Error(
+          `Can't instantiate AbstractComponent, only concrete one.`
+      );
     }
+
     this._element = null;
+  }
+
+  getTemplate() {
+    throw new Error(`Abstract method not implemented: getTemplate`);
   }
 
   getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
     }
+
     return this._element;
   }
 
   removeElement() {
-    unrender(this._element);
     this._element = null;
-  }
-
-  getTemplate() {
-    throw new Error(`Abstract method not implemented: getTemplate`);
   }
 }
