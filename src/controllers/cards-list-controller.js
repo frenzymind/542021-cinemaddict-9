@@ -61,15 +61,21 @@ export default class CardsListController {
     cardController.init();
   }
 
+  _removeFilmDetails() {
+    const filmDetailsContainer = document.querySelector(`.film-details`);
+
+    if (filmDetailsContainer) {
+      filmDetailsContainer.remove();
+    }
+  }
+
   _onDataChange(action, film) {
     const idx = this._films.findIndex((it) => it.id === film.id);
 
     switch (action) {
       case ActionType.ADD_COMMENT:
         Object.assign(this._films[idx], film);
-        if (document.querySelector(`.film-details`)) {
-          document.querySelector(`.film-details`).remove();
-        }
+        this._removeFilmDetails();
         this._onDataChangeMainController();
         break;
 
@@ -93,9 +99,7 @@ export default class CardsListController {
               input.disabled = false;
             });
             Object.assign(this._films[idx], updatedFilm);
-            if (document.querySelector(`.film-details`)) {
-              document.querySelector(`.film-details`).remove();
-            }
+            this._removeFilmDetails();
             this._onDataChangeMainController();
           })
           .catch(() => {
@@ -111,9 +115,7 @@ export default class CardsListController {
       case ActionType.UPDATE_FILM:
         api.updateFilm(film.id, ModelFilm.toRaw(film)).then((updatedFilm) => {
           Object.assign(this._films[idx], updatedFilm);
-          if (document.querySelector(`.film-details`)) {
-            document.querySelector(`.film-details`).remove();
-          }
+          this._removeFilmDetails();
           this._onDataChangeMainController();
         });
         break;
