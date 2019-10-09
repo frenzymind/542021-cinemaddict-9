@@ -86,23 +86,21 @@ export default class Statistic extends AbstractComponet {
   }
 
   _showChart(filter) {
-    let filteredFilms;
+    let filteredFilms = this._films.filter((film) => film.isWatched);
 
     switch (filter) {
       case StatisticType.ALL_TIME:
-        filteredFilms = this._films.filter((film) => film.isWatched);
         break;
 
       case StatisticType.TODAY:
-        filteredFilms = this._films.filter((film) => film.isWatched).filter((film) => {
+        filteredFilms = filteredFilms.filter((film) => {
           return (moment(film.watchedDate).year() === moment().year())
             && (moment(film.watchedDate).dayOfYear() === moment().dayOfYear());
         });
         break;
 
       case StatisticType.WEEK:
-        filteredFilms = this._films
-          .filter((film) => film.isWatched)
+        filteredFilms =filteredFilms
           .filter((film) => {
             return (moment(film.watchedDate).year() === moment().year())
               && (moment(film.watchedDate).week() === moment().week());
@@ -110,8 +108,7 @@ export default class Statistic extends AbstractComponet {
         break;
 
       case StatisticType.MONTH:
-        filteredFilms = this._films
-          .filter((film) => film.isWatched)
+        filteredFilms = filteredFilms
           .filter((film) => {
             return (moment(film.watchedDate).year() === moment().year())
               && (moment(film.watchedDate).month() === moment().month());
@@ -119,8 +116,7 @@ export default class Statistic extends AbstractComponet {
         break;
 
       case StatisticType.YEAR:
-        filteredFilms = this._films
-          .filter((film) => film.isWatched)
+        filteredFilms = filteredFilms
           .filter((film) => {
             return moment(film.watchedDate).year() === moment().year();
           });
