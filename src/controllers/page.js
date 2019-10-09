@@ -6,6 +6,11 @@ import {SortBar} from '../components/sort-bar.js';
 import {MovieController} from './movie.js';
 import {Statistic} from '../components/statistic.js';
 
+import RestAPI from '../utils/rest.js';
+import {ACTIONS} from '../utils/rest.js';
+
+const api = new RestAPI();
+
 const Chart = require(`chart.js`);
 const ChartDataLabels = require(`chartjs-plugin-datalabels`);
 
@@ -36,6 +41,7 @@ export class PageController {
     this._statisticContainer = null;
     this._statisticChartContainer = null;
 
+    this._allButton = null;
     this._watchListButton = null;
     this._historyButton = null;
     this._favoriteButoon = null;
@@ -79,6 +85,13 @@ export class PageController {
     this._filmMostContainer = this._container.querySelector(
         `.films-list--extra:nth-of-type(3) .films-list__container`
     );
+
+    this._allButton = this._container
+      .querySelector(`a[href="#all"]`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._onFilterLinkClick(FILTER_TYPE.ALL);
+      });
 
     this._watchListButton = this._container
       .querySelector(`a[href="#watchlist"]`)
@@ -139,8 +152,6 @@ export class PageController {
   }
 
   _createChart() {
-    // const canvasContext = this._statisticChartContainer.getContext(`2d`);
-    // canvasContext.clearRect(0, 0, canvasContext.width, canvasContext.height);
     if (this._chart) {
       this._chart.destroy();
     }
@@ -289,7 +300,29 @@ export class PageController {
     return filtredFilms;
   }
 
-  _onDataChange() {
+  _onDataChange(filmMock, action, id = null) {
+    console.log(filmMock, action, id);
+
+    switch (action) {
+      case ACTIONS.COOMENT_DEL:
+        api
+          .deleteComment(id)
+          .then(api.updateFilm(filmMock.id, filmMock))
+          .then(
+              api.getFilms().then((films) => {
+                this._films = films;
+                this._defaultFilms = films;
+              })
+          );
+        break;
+      case ACTIONS.COMMENT_ADD:
+        api.createComment(filmMock.comments[id], filmMock.id);
+        break;
+
+      default:
+        break;
+    }
+
     this._updatePageFilms();
   }
 

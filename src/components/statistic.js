@@ -5,8 +5,8 @@ export class Statistic extends AbstractComponent {
     super();
 
     this._totalWatched = null;
-    this._totalDurationHour = null;
-    this._totalDurationMinute = null;
+    this._totalDurationHour = 0;
+    this._totalDurationMinute = 0;
     this._topGenre = null;
   }
 
@@ -70,8 +70,8 @@ export class Statistic extends AbstractComponent {
       if (film.watched) {
         this._totalWatched++;
       }
-      this._totalDurationHour += film.durationHour;
-      this._totalDurationMinute += film.durationMinute;
+      this._totalDurationHour += +film.durationHour;
+      this._totalDurationMinute += +film.durationMinute;
 
       film.genre.forEach((filmGenre) => {
         if (countByGenres.has(filmGenre)) {

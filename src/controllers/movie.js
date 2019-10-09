@@ -2,7 +2,7 @@ import {FilmCard} from '../components/film-card.js';
 import {FilmPopup} from '../components/film-popup.js';
 import {showFilmPopup, closeFilmPopup} from '../services/popup-service.js';
 import {render} from '../utils/dom.js';
-
+import {ACTIONS} from '../utils/rest.js';
 export class MovieController {
   constructor(container, filmMock, onDataChange) {
     this._container = container;
@@ -15,14 +15,14 @@ export class MovieController {
     const filmCard = new FilmCard(this._filmMock);
     let filmPopup = this._createPopup();
 
-    const onDeleteComment = (commentIndex) => {
+    const onDeleteComment = (commentId) => {
       this._filmMock.commentsCount--;
 
       this._filmMock.comments = this._filmMock.comments.filter(
-          (_, index) => index !== commentIndex
+          (comment) => comment.id !== commentId
       );
 
-      this._onDataChange();
+      this._onDataChange(this._filmMock, ACTIONS.COOMENT_DEL, commentId);
 
       filmPopup = this._createPopup();
       filmPopup._onDeleteComment = onDeleteComment.bind(this);
@@ -33,10 +33,14 @@ export class MovieController {
     const onNewComment = (newComment) => {
       this._filmMock.commentsCount++;
       this._filmMock.comments.push(newComment);
-      this._onDataChange();
+      this._onDataChange(
+          this._filmMock,
+          ACTIONS.COMMENT_ADD,
+          this._filmMock.comments.length - 1
+      );
 
       filmPopup = this._createPopup();
-      filmPopup._onDeleteComment = onDeleteComment.bind(this);
+      // filmPopup._onDeleteComment = onDeleteComment.bind(this);
       filmPopup._onNewComment = onNewComment.bind(this);
       showFilmPopup(filmPopup);
     };
@@ -51,6 +55,7 @@ export class MovieController {
 
     filmCard.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `BUTTON`) {
+        filmPopup.loadComments(onDeleteComment.bind(this));
         showFilmPopup(filmPopup);
       }
     });
@@ -105,7 +110,7 @@ export class MovieController {
 
   _onAddToWatchList() {
     this._filmMock.watchList = !this._filmMock.watchList;
-    this._onDataChange();
+    this._onDataChange(this._filmMock);
   }
 
   _onAddToWatched() {
@@ -113,11 +118,11 @@ export class MovieController {
     this._userRatingContainer.style.display = this._filmMock.watched
       ? `block`
       : `none`;
-    this._onDataChange();
+    this._onDataChange(this._filmMock);
   }
 
   _onAddToFavorite() {
     this._filmMock.favorite = !this._filmMock.favorite;
-    this._onDataChange();
+    this._onDataChange(this._filmMock);
   }
 }

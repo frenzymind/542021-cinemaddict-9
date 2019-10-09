@@ -1,12 +1,14 @@
-import {getFilmCardCommentComponent} from './film-card-comment.js';
-import {AbstractComponent} from './abstract-component.js';
-import {getCommentModel} from '../models/comment.js';
+import {getFilmCardCommentComponent} from "./film-card-comment.js";
+import {AbstractComponent} from "./abstract-component.js";
+import {getCommentModel} from "../models/comment.js";
+import RestAPI from "../utils/rest.js";
 
 const moment = require(`moment`);
 
 export class FilmPopup extends AbstractComponent {
   constructor(film) {
     super();
+    this._id = film.id;
     this._imgSrc = film.imgSrc;
     this._title = film.title;
     this._rating = film.rating;
@@ -21,6 +23,16 @@ export class FilmPopup extends AbstractComponent {
     this._commentsCount = film.commentsCount;
     this._comments = film.comments;
 
+    this._ageRating = film.ageRating;
+    this._alterTitle = film.alterTitle;
+    this._director = film.director;
+    this._writers = film.writers;
+    this._actors = film.actors;
+    this._releaseCountry = film.releaseCountry;
+    this._personalRating = film.personalRating;
+
+    this._commentsFetched = false;
+
     this._newComment = this.getElement().querySelector(
         `.film-details__new-comment`
     );
@@ -33,6 +45,10 @@ export class FilmPopup extends AbstractComponent {
 
     this._newCommentSelectedEmoji = this._newComment.querySelector(
         `.film-details__add-emoji-label`
+    );
+
+    this._commentsContainer = this.getElement().querySelector(
+        `.film-details__comments-list`
     );
   }
 
@@ -57,17 +73,19 @@ export class FilmPopup extends AbstractComponent {
       });
   }
 
-  set _onDeleteComment(cb) {
+  _setCommentListener(cb) {
     const comments = this.getElement().querySelectorAll(
         `.film-details__comment`
     );
 
-    comments.forEach((comment, commentIndex) => {
+    comments.forEach((comment, index) => {
       comment
         .querySelector(`.film-details__comment-delete`)
         .addEventListener(`click`, (evt) => {
           evt.preventDefault();
-          cb(commentIndex);
+          console.log(`popup delete`, comment);
+
+          cb(this._comments[index].id);
         });
     });
   }
@@ -88,17 +106,35 @@ export class FilmPopup extends AbstractComponent {
               return;
             }
 
-            newComment.text = this._element.querySelector(
+            newComment.text = this.getElement().querySelector(
                 `.film-details__comment-input`
             ).value;
 
             newComment.emoji = commentEmoji.dataset.emoji;
             newComment.daysAgo = new Date().getTime();
 
+            console.log(`newComment keydown`, newComment);
+
             cb(newComment);
           }
         });
       });
+  }
+
+  loadComments(cb) {
+    const api = new RestAPI();
+    api.getComments(this._id).then((comments) => {
+      this._comments = comments;
+      this._showComments();
+      this._setCommentListener(cb);
+    });
+  }
+
+  _showComments() {
+    this._commentsContainer.innerHTML = ``;
+    this._commentsContainer.innerHTML = this._comments
+      .map((comment) => getFilmCardCommentComponent(comment))
+      .join(``);
   }
 
   getTemplate() {
@@ -112,14 +148,16 @@ export class FilmPopup extends AbstractComponent {
           <div class="film-details__poster">
             <img class="film-details__poster-img" src="${this._imgSrc}" alt="">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${this._ageRating}+</p>
           </div>
 
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${this._title}</h3>
-                <p class="film-details__title-original">Original: The Great Flamarion</p>
+                <p class="film-details__title-original">Original: ${
+  this._alterTitle
+}</p>
               </div>
 
               <div class="film-details__rating">
@@ -131,15 +169,19 @@ export class FilmPopup extends AbstractComponent {
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Anthony Mann</td>
+                <td class="film-details__cell">${this._director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+                <td class="film-details__cell">${Array.from(this._writers).join(
+      `, `
+  )}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+                <td class="film-details__cell">${Array.from(this._actors).join(
+      `, `
+  )}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
@@ -155,7 +197,7 @@ export class FilmPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${this._releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
@@ -210,38 +252,28 @@ export class FilmPopup extends AbstractComponent {
             </div>
 
             <section class="film-details__user-rating-inner">
-              <h3 class="film-details__user-rating-title">The Great Flamarion</h3>
+              <h3 class="film-details__user-rating-title">${
+  this._alterTitle
+}</h3>
 
               <p class="film-details__user-rating-feelings">How you feel it?</p>
 
               <div class="film-details__user-rating-score">
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
-                <label class="film-details__user-rating-label" for="rating-1">1</label>
 
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
-                <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
-                <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
-                <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5">
-                <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
-                <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
-                <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
-                <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked>
-                <label class="film-details__user-rating-label" for="rating-9">9</label>
-
+                ${Array(9)
+                  .fill(``)
+                  .map(
+                      (
+                          _,
+                          index
+                      ) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${index +
+                      1}" id="rating-${index + 1}" ${
+                        index + 1 === this._personalRating ? `checked` : ``
+                      }>
+                <label class="film-details__user-rating-label" for="rating-${index +
+                  1}">${index + 1}</label>`
+                  )
+                  .join(``)}
               </div>
             </section>
           </div>
@@ -255,9 +287,13 @@ export class FilmPopup extends AbstractComponent {
 }</span></h3>
 
           <ul class="film-details__comments-list">
-          ${this._comments
-            .map((comment) => getFilmCardCommentComponent(comment))
-            .join(``)}
+          ${
+  this._commentsFetched
+    ? this._comments.map((comment) =>
+      getFilmCardCommentComponent(comment).join(``)
+    )
+    : `Loading`
+}
           </ul>
       <div class="film-details__new-comment">
       <div for="add-emoji" class="film-details__add-emoji-label"></div>
