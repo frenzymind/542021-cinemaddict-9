@@ -9,7 +9,7 @@ const StatisticType = {
   TODAY: `today`,
   WEEK: `week`,
   MONTH: `month`,
-  YEAR: `year`,
+  YEAR: `year`
 };
 
 export default class Statistic extends AbstractComponet {
@@ -17,7 +17,9 @@ export default class Statistic extends AbstractComponet {
     super();
     this._container = container;
     this._films = films;
-    this._statisticChart = new StatisticChart(this._films.filter((film) => film.isWatched));
+    this._statisticChart = new StatisticChart(
+        this._films.filter((film) => film.isWatched)
+    );
 
     this._init();
   }
@@ -27,10 +29,11 @@ export default class Statistic extends AbstractComponet {
               <p class="statistic__rank">
                 Your rank
                 <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-                <span class="statistic__rank-label">${Profile
-        .getUserRating(this._films.reduce((total, film) => {
-          return film.isWatched ? ++total : total;
-        }, 0))}</span>
+                <span class="statistic__rank-label">${Profile.getUserRating(
+      this._films.reduce((total, film) => {
+        return film.isWatched ? ++total : total;
+      }, 0)
+  )}</span>
               </p>
 
               <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -57,7 +60,6 @@ export default class Statistic extends AbstractComponet {
 
   hide() {
     this.getElement().classList.add(`visually-hidden`);
-
   }
 
   show() {
@@ -67,17 +69,19 @@ export default class Statistic extends AbstractComponet {
   update() {
     this.getElement().querySelector(`#statistic-all-time`).checked = true;
     this._statisticChart.removeElement();
-    this._statisticChart = new StatisticChart(this._films.filter((film) => film.isWatched));
+    this._statisticChart = new StatisticChart(
+        this._films.filter((film) => film.isWatched)
+    );
     render(this.getElement(), this._statisticChart.getElement());
-
   }
 
   _init() {
     render(this._container, this.getElement());
     render(this.getElement(), this._statisticChart.getElement());
 
-    const statisticFilters = this.getElement()
-      .querySelector(`.statistic__filters`);
+    const statisticFilters = this.getElement().querySelector(
+        `.statistic__filters`
+    );
 
     statisticFilters.addEventListener(`input`, () => {
       const filter = new FormData(statisticFilters).get(`statistic-filter`);
@@ -94,38 +98,39 @@ export default class Statistic extends AbstractComponet {
 
       case StatisticType.TODAY:
         filteredFilms = filteredFilms.filter((film) => {
-          return (moment(film.watchedDate).year() === moment().year())
-            && (moment(film.watchedDate).dayOfYear() === moment().dayOfYear());
+          return (
+            moment(film.watchedDate).year() === moment().year() &&
+            moment(film.watchedDate).dayOfYear() === moment().dayOfYear()
+          );
         });
         break;
 
       case StatisticType.WEEK:
-        filteredFilms =filteredFilms
-          .filter((film) => {
-            return (moment(film.watchedDate).year() === moment().year())
-              && (moment(film.watchedDate).week() === moment().week());
-          });
+        filteredFilms = filteredFilms.filter((film) => {
+          return (
+            moment(film.watchedDate).year() === moment().year() &&
+            moment(film.watchedDate).week() === moment().week()
+          );
+        });
         break;
 
       case StatisticType.MONTH:
-        filteredFilms = filteredFilms
-          .filter((film) => {
-            return (moment(film.watchedDate).year() === moment().year())
-              && (moment(film.watchedDate).month() === moment().month());
-          });
+        filteredFilms = filteredFilms.filter((film) => {
+          return (
+            moment(film.watchedDate).year() === moment().year() &&
+            moment(film.watchedDate).month() === moment().month()
+          );
+        });
         break;
 
       case StatisticType.YEAR:
-        filteredFilms = filteredFilms
-          .filter((film) => {
-            return moment(film.watchedDate).year() === moment().year();
-          });
+        filteredFilms = filteredFilms.filter((film) => {
+          return moment(film.watchedDate).year() === moment().year();
+        });
         break;
-
     }
     this._statisticChart.removeElement();
     this._statisticChart = new StatisticChart(filteredFilms);
     render(this.getElement(), this._statisticChart.getElement());
-
   }
 }
