@@ -14,7 +14,11 @@ export const ActionType = {
 };
 
 export default class CardsListController {
-  constructor(container, onDataChangeMainController, onViewChangeMainController) {
+  constructor(
+      container,
+      onDataChangeMainController,
+      onViewChangeMainController
+  ) {
     this._films = [];
     this._container = container;
     this._onDataChangeMainController = onDataChangeMainController;
@@ -34,10 +38,9 @@ export default class CardsListController {
   show() {
     this._container.innerHTML = ``;
 
-    this._films.slice()
-      .forEach((film) => {
-        this._renderCard(this._container, film);
-      });
+    this._films.slice().forEach((film) => {
+      this._renderCard(this._container, film);
+    });
   }
 
   onViewChange() {
@@ -45,14 +48,21 @@ export default class CardsListController {
   }
 
   _renderCard(container, film) {
-    const cardController = new CardController(container, film, this._onDataChange, this._onViewChangeMainController, this._onFilmDetailsOpen, film === this._filmDetailsOpen);
+    const cardController = new CardController(
+        container,
+        film,
+        this._onDataChange,
+        this._onViewChangeMainController,
+        this._onFilmDetailsOpen,
+        film === this._filmDetailsOpen
+    );
 
     this._subscriptions.push(cardController.setDefaultView);
     cardController.init();
   }
 
   _onDataChange(action, film) {
-    let idx = this._films.findIndex((it) => it.id === film.id);
+    const idx = this._films.findIndex((it) => it.id === film.id);
 
     switch (action) {
       case ActionType.ADD_COMMENT:
@@ -64,18 +74,20 @@ export default class CardsListController {
         break;
 
       case ActionType.UPDATE_RATING:
-        const userRatingWrap = document
-          .querySelector(`.form-details__middle-container`);
-        const ratingInputs = document
-          .querySelectorAll(`.film-details__user-rating-input`);
+        const userRatingWrap = document.querySelector(
+            `.form-details__middle-container`
+        );
+        const ratingInputs = document.querySelectorAll(
+            `.film-details__user-rating-input`
+        );
 
         ratingInputs.forEach((input) => {
           input.disabled = true;
         });
         userRatingWrap.style.backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
-
-        api.updateFilm(film.id, ModelFilm.toRaw(film))
+        api
+          .updateFilm(film.id, ModelFilm.toRaw(film))
           .then((updatedFilm) => {
             ratingInputs.forEach((input) => {
               input.disabled = false;
@@ -97,14 +109,13 @@ export default class CardsListController {
         break;
 
       case ActionType.UPDATE_FILM:
-        api.updateFilm(film.id, ModelFilm.toRaw(film))
-          .then((updatedFilm) => {
-            Object.assign(this._films[idx], updatedFilm);
-            if (document.querySelector(`.film-details`)) {
-              document.querySelector(`.film-details`).remove();
-            }
-            this._onDataChangeMainController();
-          });
+        api.updateFilm(film.id, ModelFilm.toRaw(film)).then((updatedFilm) => {
+          Object.assign(this._films[idx], updatedFilm);
+          if (document.querySelector(`.film-details`)) {
+            document.querySelector(`.film-details`).remove();
+          }
+          this._onDataChangeMainController();
+        });
         break;
     }
   }
