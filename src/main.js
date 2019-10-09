@@ -1,36 +1,28 @@
-import {getProfile} from './components/profile.js';
-import {Menu} from './components/menu.js';
+import Search from './components/search';
+import Profile from './components/profile';
+import {render} from './utils';
+import PageController from './controllers/page-controller';
+import API from './api';
 
-import {getFilmCard} from './database/film-card.js';
-import {getFilter, fillFilter} from './database/filter.js';
-import {render} from './utils/dom.js';
-import {PageController} from './controllers/page.js';
-import {SearchController} from './controllers/search.js';
+const AUTHORIZATION = `Basic sdfasdf0yq34`;
+const END_POINT = `https://htmlacademy-es-9.appspot.com/cinemaddict`;
+
+const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
 const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
 
-let allFilms = [];
+render(header, new Search().getElement());
+api.getFilms().then((films) => {
+  const user = {
+    moviesWatched: films.reduce((total, film) => {
+      return film.isWatched ? ++total : total;
+    }, 0)
+  };
 
-allFilms = new Array(14).fill(``).map(() => getFilmCard());
+  render(header, new Profile(user).getElement());
+  const pageController = new PageController(main, films);
+  pageController.init();
+});
 
-const filter = getFilter();
-fillFilter(filter, allFilms);
-
-const menu = new Menu(filter);
-const profile = getProfile();
-
-const pageController = new PageController(main, allFilms);
-const searchController = new SearchController(
-    header,
-    allFilms,
-    pageController.onSearch.bind(pageController)
-);
-
-searchController.init();
-
-render(header, profile);
-
-render(main, menu.getElement());
-
-pageController.init();
+export {api};
