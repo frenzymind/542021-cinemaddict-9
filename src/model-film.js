@@ -24,12 +24,12 @@ export default class ModelFilm {
     };
   }
 
-  static parseFilm(film) {
+  static parse(film) {
     return new ModelFilm(film);
   }
 
-  static parseFilms(films) {
-    return films.map(ModelFilm.parseFilm);
+  static parseCollection(films) {
+    return films.map(ModelFilm.parse);
   }
 
   static toRaw(film) {

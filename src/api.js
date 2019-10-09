@@ -10,11 +10,14 @@ const Method = {
 
 const HTTPStatus = {
   SUCCESS: 200,
-  REDIRECTION: 300,
+  REDIRECTION: 300
 };
 
 const checkStatus = (response) => {
-  if (response.status >= HTTPStatus.SUCCESS && response.status < HTTPStatus.REDIRECTION) {
+  if (
+    response.status >= HTTPStatus.SUCCESS &&
+    response.status < HTTPStatus.REDIRECTION
+  ) {
     return response;
   } else {
     throw new Error(`${response.status}:`);
@@ -34,7 +37,7 @@ export default class API {
   getFilms() {
     return this._load({url: `movies`})
       .then(toJSON)
-      .then(ModelFilm.parseFilms);
+      .then(ModelFilm.parseCollection);
   }
 
   updateFilm(id, film) {
@@ -42,10 +45,10 @@ export default class API {
       url: `movies/${id}`,
       method: Method.PUT,
       body: JSON.stringify(film),
-      headers: new Headers({'Content-Type': `application/json`}),
+      headers: new Headers({"Content-Type": `application/json`})
     })
       .then(toJSON)
-      .then(ModelFilm.parseFilm);
+      .then(ModelFilm.parse);
   }
 
   getComments(filmId) {
@@ -59,13 +62,13 @@ export default class API {
       url: `comments/${filmId}`,
       method: Method.POST,
       body: JSON.stringify(comment),
-      headers: new Headers({'Content-Type': `application/json`})
+      headers: new Headers({"Content-Type": `application/json`})
     })
       .then(toJSON)
       .then((json) => {
         return {
-          film: ModelFilm.parseFilm(json[`movie`]),
-          comments: ModelComment.parseComments(json[`comments`]),
+          film: ModelFilm.parse(json[`movie`]),
+          comments: ModelComment.parseComments(json[`comments`])
         };
       });
   }
@@ -73,7 +76,7 @@ export default class API {
   deleteComment(id) {
     return this._load({
       url: `comments/${id}`,
-      method: Method.DELETE,
+      method: Method.DELETE
     });
   }
 
